@@ -1,5 +1,13 @@
 import random
 
+class Result:
+    def __init__(self, bank, bet, rounds, wins, losses):
+        self.bank = bank
+        self.bet = bet
+        self.rounds = rounds
+        self.wins = wins
+        self.losses = losses
+
 class Blackjack:
     def __init__(
             self,
@@ -30,6 +38,8 @@ class Blackjack:
         self.blackjackPayout = blackjackPayout
 
         self.runningCount = 0
+
+        self.runningBet = 0
         
     def dealCard(self):
         """Deal a card from the deck and count it."""
@@ -61,6 +71,12 @@ class Blackjack:
             hand[hand.index(11)] = 1
             score = sum(hand)
         return score
+    
+    def placeBet(self, bet: int):
+        """Place a bet and remove it from the player's bank."""
+
+        self.playerBank -= bet
+        self.runningBet += bet
 
     def basicStrategy(self, player_hand, dealer_hand):
         """Return the basic strategy for the player's hand."""
@@ -162,7 +178,7 @@ class Blackjack:
         rounds = []
         wins = 0
         losses = 0
-        runningBet = 0
+        self.runningBet = 0
 
         while len(self.deck) > (self.cutCardLocation*52):
 
@@ -188,8 +204,7 @@ class Blackjack:
                     break
             
             # Placing bet and removing from bank
-            runningBet += bet
-            self.playerBank -= bet
+            self.placeBet(bet)
 
             roundLive = True
             currentHand = len(player_hands)
@@ -202,7 +217,7 @@ class Blackjack:
                 player_hands[0].append(self.dealCard())
 
                 # Pay bet for splitting
-                self.playerBank -= bet
+                self.placeBet(bet)
 
                 # TODO letting us do inifite splits if we add it later on
                 handSplit = True
@@ -212,15 +227,6 @@ class Blackjack:
 
             # Loop through all hands
             for player_hand in player_hands:
-                # 1. If dealer has an ace, offer insurance
-                # 2. Dealer check if they have BJ
-                # 3. If dealer has BJ, check if player has BJ, games ends instantly, push and/or payout insurance
-
-                # 4. If dealer didn't have BJ, player plays
-                # 5. If player has BJ, player wins 3:2
-                
-                # 6. Play can hit, stand, double, split
-
                 roundLive = True
                 insurance = False
                 doubled = False
@@ -240,7 +246,7 @@ class Blackjack:
                     if dealer_hand[0] == 11:
                         # Player is offered insurance
                         if trueCount >= 3:
-                            self.playerBank -= bet / 2
+                            self.placeBet(bet / 2)
                             insurance = True
 
                     if dealer_score == 21:
@@ -267,7 +273,7 @@ class Blackjack:
                         player_hand.append(self.dealCard())
 
                         doubled = True
-                        self.playerBank -= bet
+                        self.placeBet(bet)
 
                     player_score = Blackjack.calculateScore(player_hand)
 
@@ -312,4 +318,4 @@ class Blackjack:
 
                 rounds.append(self.playerBank)
 
-        return self.playerBank, runningBet, rounds, wins, losses
+        return Result(self.playerBank, self.runningBet, rounds, wins, losses)
