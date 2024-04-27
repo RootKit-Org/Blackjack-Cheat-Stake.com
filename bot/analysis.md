@@ -44,3 +44,22 @@ Refer the the Count Initial Cards step
 Track what the final cards of the dealer are quickly and then game ends.
 
 Loop back to the beginning
+
+
+### Extras we forgot
+Shoe replacement
+
+
+
+
+Pos1
+ - 540, 725
+ - 615, 810
+ - 740, 640
+ - 825, 725
+Pos2 - 
+Pos3 - 
+Pos4 - 
+Pos5 - 
+Pos6 - 
+Pos7 - 
